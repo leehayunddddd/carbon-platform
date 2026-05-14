@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 탄소 관리 플랫폼(Carbon Management Platform)
 
-## Getting Started
+> 제조사, 물류사 등 기업 고객이 원소재·전기·운송 데이터를 입력하면 제품별 탄소 발자국(PCF)을 자동 계산하는 SaaS형 대시보드
 
-First, run the development server:
+## 로컬 실행 방법
 
 ```bash
+# 1. 레포지토리 클론
+git clone https://github.com/leehayunddddd/carbon-platform.git
+
+# 2. 폴더 이동
+cd carbon-platform
+
+# 3. 패키지 설치
+npm install
+
+# 4. 개발 서버 실행
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# 5. 브라우저 확인
+#http://localhost:3000
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 기술 스택
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+프레임워크 : Next.js 14(App Router)
+언어 : TypeScript
+스타일 : Tailwind CSS
+차트 : Recharts
+엑셀 파싱 : xlsx
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 시스템 설계
 
-## Learn More
+```
+src/
+├── app/
+│   └── page.tsx          # 메인 페이지 (업로드 → 대시보드 전환)
+├── components/
+│   └── Dashboard.tsx     # 대시보드 UI (차트 + 테이블)
+├── lib/
+│   ├── excel.ts          # 엑셀 파싱 로직
+│   └── pcf.ts            # PCF 계산 로직
+└── types/
+    └── index.ts          # 타입 정의
+```
 
-To learn more about Next.js, take a look at the following resources:
+### PCF 계산 방식
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+탄소 배출량 = 활동량 x 배출계수
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- 전기: 0.456 kgCO₂e / kWh (한국전력 기본값)
+- 원소재 플라스틱1: 2.3 kgCO₂e / kg
+- 원소재 플라스틱2: 3.2 kgCO₂e / kg
+- 운송 트럭: 3.5 kgCO₂e / ton-km
+```
 
-## Deploy on Vercel
+## 설계 trade-off
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+\*DB 연동 미포함\*\*
+엑셀 임포트만으로 핵심 PCF 계산 기능을 충분히 구현할 수 있어서 초기 복잡도를 줄이는 방향으로 결정했습니다.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**상태 관리: React useState**
+앱 규모가 단일 페이지 수준이라 Redux 같은 외부 상태 관리 라이브러리는 오버엔지니어링이라 판단했습니다.
+
+**스타일: Tailwind CSS**
+컴포넌트 단위로 빠르게 스타일링할 수 있고, 디자인 일관성을 유지하기 쉬워서 선택했습니다.
+
+**차트: Recharts**
+React 기반이라 Next.js와 궁합이 좋고, 커스터마이징이 직관적이어서 선택했습니다.
+
+## AI 사용 내역
+
+본 프로젝트는 Claude (Anthropic)를 활용하여 개발했습니다.
+
+프로젝트 구조 설계 단계에서 폴더 구조와 각 파일의 역할을 어떻게 나눌지 AI와 함께 설계했습니다. PCF 계산 로직은 배출계수 기반 계산 함수 구현을 요청했고, 엑셀 파싱은 xlsx 라이브러리를 활용하는 방식으로 구현했습니다. 대시보드 차트와 테이블 컴포넌트도 AI를 통해 초안을 작성한 뒤, 실제 과제 데이터 구조에 맞게 수정했습니다. 디버깅 과정에서는 엑셀 열 인덱스 불일치 문제를 AI와 함께 콘솔 로그를 분석하며 해결했습니다.
+
+AI가 생성한 코드를 그대로 사용하지 않고, 각 로직이 왜 이렇게 동작하는지 직접 이해하고 적용했습니다.
+
+## 주요 기능
+
+- 엑셀 파일 업로드 후 PCF 자동 계산
+- 월별 탄소 배출량 바 차트
+- 활동 유형별 비율 파이 차트
+- 월별 총 배출량 추이 라인 차트
+- 상세 데이터 테이블
+- 오류 입력 시 에러 메시지 표시
+
+## 화면 미리보기
+
+![업로드 화면](public/-upload.png)
+![대시보드1](public/dashboard1.png)
+![대시보드2](public/dashboard2.png)
+![대시보드3](public/dashboard3.png)
