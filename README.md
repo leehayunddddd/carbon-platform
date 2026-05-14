@@ -44,15 +44,47 @@ src/
     └── index.ts          # 타입 정의
 ```
 
+## 데이터 스키마
+
+````mermaid
+erDiagram
+    ActivityData {
+        string date
+        string acticityType
+        string description
+        number amount
+        string unit
+    }
+    PCFResult {
+        string date
+        string activityType
+        string description
+        number amount
+        string unit
+        number factor
+        number emission
+    }
+    EmissionFactor {
+        string activity
+        number factor
+        string unit
+    }
+    ActivityData ||--|| PCFResult : "계산 후 확장"
+    EmissionFactor ||--o{ PCFResult : "배출계수 적용"
+    ```
+
+
 ### PCF 계산 방식
 
-```
+````
+
 탄소 배출량 = 활동량 x 배출계수
 
 - 전기: 0.456 kgCO₂e / kWh (한국전력 기본값)
 - 원소재 플라스틱1: 2.3 kgCO₂e / kg
 - 원소재 플라스틱2: 3.2 kgCO₂e / kg
 - 운송 트럭: 3.5 kgCO₂e / ton-km
+
 ```
 
 ## 설계 trade-off
@@ -107,3 +139,4 @@ https://youtu.be/9ivhesxSGck
 
 **본 시스템**
 기업이 이미 관리하고 있는 엑셀 데이터 그대로 업로드하면 PCF를 자동으로 계산하고 실시간으로 시각화합니다. 별도의 데이터 전환 없이 바로 도입할 수 있고, 필요에 따라 기능을 확장하기 쉬운 구조입니다.
+```
