@@ -5,7 +5,6 @@ import {
   MonthlySummary,
 } from '@/types';
 
-// 배출계수 (과제 데이터 기준)
 export const EMISSION_FACTORS: EmissionFactor[] = [
   { activity: '전기', factor: 0.456, unit: 'kgCO2e / kWh' },
   { activity: '원소재(플라스틱1)', factor: 2.3, unit: 'kgCO2e / kg' },
@@ -13,7 +12,6 @@ export const EMISSION_FACTORS: EmissionFactor[] = [
   { activity: '운송', factor: 3.5, unit: 'kgCO2e / ton-km' },
 ];
 
-// 활동 유형별 배출계수 가져오기
 export function getEmissionFactor(
   activityType: string,
   description: string
@@ -27,7 +25,6 @@ export function getEmissionFactor(
   return 0;
 }
 
-// PCF 계산
 export function calculatePCF(data: ActivityData[]): PCFResult[] {
   return data.map((item) => {
     const factor = getEmissionFactor(item.activityType, item.description);
@@ -36,7 +33,6 @@ export function calculatePCF(data: ActivityData[]): PCFResult[] {
   });
 }
 
-// 월별 요약
 export function getMonthlySummary(results: PCFResult[]): MonthlySummary[] {
   const map = new Map<string, MonthlySummary>();
 
