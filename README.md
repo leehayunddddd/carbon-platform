@@ -46,11 +46,11 @@ src/
 
 ## 데이터 스키마
 
-````mermaid
+```mermaid
 erDiagram
     ActivityData {
         string date
-        string acticityType
+        string activityType
         string description
         number amount
         string unit
@@ -71,8 +71,7 @@ erDiagram
     }
     ActivityData ||--|| PCFResult : "계산 후 확장"
     EmissionFactor ||--o{ PCFResult : "배출계수 적용"
-    ```
-
+```
 
 ### PCF 계산 방식
 
@@ -140,3 +139,4 @@ https://youtu.be/9ivhesxSGck
 **본 시스템**
 기업이 이미 관리하고 있는 엑셀 데이터 그대로 업로드하면 PCF를 자동으로 계산하고 실시간으로 시각화합니다. 별도의 데이터 전환 없이 바로 도입할 수 있고, 필요에 따라 기능을 확장하기 쉬운 구조입니다.
 ```
+````
