@@ -1,21 +1,9 @@
 'use client';
 
 import { PCFResult, MonthlySummary } from '@/types';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-} from 'recharts';
+import MonthlyBarChart from './charts/MonthlyBarChart';
+import TypePieChart from './charts/TypePieChart';
+import TrendLineChart from './charts/TrendLineChart';
 
 interface Props {
   results: PCFResult[];
@@ -25,8 +13,6 @@ interface Props {
   fileName: string;
   onReset: () => void;
 }
-
-const COLORS = ['#22c55e', '#3b82f6', '#f59e0b'];
 
 export default function Dashboard({
   results,
@@ -48,9 +34,9 @@ export default function Dashboard({
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-green-400">
-            🌿 탄소 관리 플랫폼
+            탄소 관리 플랫폼
           </h1>
-          <p className="text-gray-400 mt-1">📄 {fileName}</p>
+          <p className="text-gray-400 mt-1">{fileName}</p>
         </div>
         <button
           onClick={onReset}
@@ -90,87 +76,9 @@ export default function Dashboard({
 
       {/* 차트 섹션 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        {/* 월별 바 차트 */}
-        <div className="bg-gray-900 rounded-xl p-5">
-          <h2 className="text-lg font-semibold mb-4">월별 탄소 배출량</h2>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={monthly}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis dataKey="month" stroke="#9ca3af" tick={{ fontSize: 12 }} />
-              <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#1f2937',
-                  border: 'none',
-                  borderRadius: '8px',
-                }}
-                labelStyle={{ color: '#fff' }}
-              />
-              <Legend />
-              <Bar dataKey="전기" fill="#22c55e" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="원소재" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="운송" fill="#f59e0b" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* 파이 차트 */}
-        <div className="bg-gray-900 rounded-xl p-5">
-          <h2 className="text-lg font-semibold mb-4">활동 유형별 비율</h2>
-          <ResponsiveContainer width="100%" height={250}>
-            <PieChart>
-              <Pie
-                data={pieData}
-                cx="50%"
-                cy="50%"
-                outerRadius={90}
-                dataKey="value"
-                label={({ name, percent }) =>
-                  `${name} ${(percent * 100).toFixed(0)}%`
-                }
-                labelLine={false}
-              >
-                {pieData.map((_, index) => (
-                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#1f2937',
-                  border: 'none',
-                  borderRadius: '8px',
-                }}
-                formatter={(value: number) => [`${value.toFixed(1)} kgCO₂e`]}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* 월별 추이 라인 차트 */}
-        <div className="bg-gray-900 rounded-xl p-5 md:col-span-2">
-          <h2 className="text-lg font-semibold mb-4">월별 총 배출량 추이</h2>
-          <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={monthly}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis dataKey="month" stroke="#9ca3af" tick={{ fontSize: 12 }} />
-              <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#1f2937',
-                  border: 'none',
-                  borderRadius: '8px',
-                }}
-              />
-              <Line
-                type="monotone"
-                dataKey="total"
-                stroke="#22c55e"
-                strokeWidth={2}
-                dot={{ fill: '#22c55e' }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+        <MonthlyBarChart data={monthly} />
+        <TypePieChart data={pieData} />
+        <TrendLineChart data={monthly} />
       </div>
 
       {/* 데이터 테이블 */}
@@ -181,14 +89,14 @@ export default function Dashboard({
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-gray-400 border-b border-gray-700">
+              <tr className="bg-gray-400 border-b border-gray-700">
                 <th className="text-left py-2 pr-4">날짜</th>
                 <th className="text-left py-2 pr-4">유형</th>
                 <th className="text-left py-2 pr-4">설명</th>
                 <th className="text-right py-2 pr-4">활동량</th>
                 <th className="text-right py-2 pr-4">단위</th>
                 <th className="text-right py-2 pr-4">배출계수</th>
-                <th className="text-right py-2">탄소배출량 (kgCO₂e)</th>
+                <th className="text-right py-2 pr-4">탄소배출량 (kgCO₂e)</th>
               </tr>
             </thead>
             <tbody>
