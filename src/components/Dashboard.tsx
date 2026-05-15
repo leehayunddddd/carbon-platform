@@ -37,9 +37,9 @@ export default function Dashboard({
   onReset,
 }: Props) {
   const pieData = [
-    { name: '전기', value: Math.round(byType.전기 * 100) / 100 },
-    { name: '원소재', value: Math.round(byType.원소재 * 100) / 100 },
-    { name: '운송', value: Math.round(byType.운송 * 100) / 100 },
+    { name: '전기', value: parseFloat(byType.전기.toFixed(2)) },
+    { name: '원소재', value: parseFloat(byType.원소재.toFixed(2)) },
+    { name: '운송', value: parseFloat(byType.운송.toFixed(2)) },
   ];
 
   return (
@@ -64,25 +64,25 @@ export default function Dashboard({
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <SummaryCard
           title="총 탄소 배출량"
-          value={`${total.toFixed(1)}`}
+          value={`${total.toFixed(2)}`}
           unit="kgCO₂e"
           color="text-green-400"
         />
         <SummaryCard
           title="전기"
-          value={byType.전기.toFixed(1)}
+          value={byType.전기.toFixed(2)}
           unit="kgCO₂e"
           color="text-green-400"
         />
         <SummaryCard
           title="원소재"
-          value={byType.원소재.toFixed(1)}
+          value={byType.원소재.toFixed(2)}
           unit="kgCO₂e"
           color="text-blue-400"
         />
         <SummaryCard
           title="운송"
-          value={byType.운송.toFixed(1)}
+          value={byType.운송.toFixed(2)}
           unit="kgCO₂e"
           color="text-yellow-400"
         />
