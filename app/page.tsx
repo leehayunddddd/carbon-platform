@@ -34,16 +34,22 @@ export default function Home() {
 
     try {
       const data: ActivityData[] = await parseExcelFile(file);
-      const pcfResults = calculatePCF(data);
-      const monthlySummary = getMonthlySummary(pcfResults);
-      const totalEmission = getTotalEmission(pcfResults);
-      const emissionByType = getEmissionByType(pcfResults);
 
-      setResults(pcfResults);
-      setMonthly(monthlySummary);
-      setTotal(totalEmission);
-      setByType(emissionByType);
-    } catch (err) {
+      const response = await fetch('/api/calculate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data }),
+      });
+
+      if (!response.ok) throw new Error('Api 오류');
+
+      const result = await response.json();
+
+      setResults(result.results);
+      setMonthly(result.monthly);
+      setTotal(result.total);
+      setByType(result.byType);
+    } catch {
       setError('파일을 읽는 중 오류가 발생했습니다. 형식을 확인해주세요.');
     } finally {
       setLoading(false);
@@ -100,7 +106,7 @@ function UploadScreen({
       </div>
 
       <label className="cursor-pointer bg-green-600 hover:bg-green-500 transition-colors px-8 py-4 rounded-xl text-lg font-semibold">
-        {loading ? '처리 중...' : '📂 엑셀 파일 업로드'}
+        {loading ? '처리 중...' : '엑셀 파일 업로드'}
         <input
           type="file"
           accept=".xlsx,.xls"
