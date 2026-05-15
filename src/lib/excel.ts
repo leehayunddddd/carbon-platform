@@ -29,13 +29,16 @@ export function parseExcelFile(file: File): Promise<ActivityData[]> {
           console.log(`행 ${i}:`, row);
           if (!row || row.length < 4) continue;
 
-          const activityType = row[1] as ActivityType;
-          if (!['전기', '원소재', '운송'].includes(activityType)) continue;
+          const activityType = String(row[1]) as ActivityType;
+          if (!['전기', '원소재', '운송'].includes(activityType)) {
+            console.warn(`알 수 없는 활동 유형: ${activityType} (행 ${i})`);
+            continue;
+          }
 
           const date = formatDate(row[0]);
-          const description = (row[2] as string) || '';
+          const description = String(row[2] ?? '');
           const amount = parseFloat(String(row[3])) || 0;
-          const unit = (row[4] as string) || '';
+          const unit = String(row[4] ?? '');
 
           if (date && amount > 0) {
             activities.push({ date, activityType, description, amount, unit });
